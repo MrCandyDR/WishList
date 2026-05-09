@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/stylesheets/style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col font-sans antialiased text-gray-900">
+
+    <%- include('partials/header') %>
+
+    <main class="container mx-auto px-6 py-16 flex-grow">
+        <div class="max-w-6xl mx-auto">
+            
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-extrabold text-gray-950 mb-4">🌍 Khám phá mong muốn</h2>
+                <p class="text-gray-500">Xem cộng đồng đang ước gì và lấy cảm hứng cho chính mình!</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <% if (wishes.length === 0) { %>
+                    <div class="col-span-full py-20 text-center text-gray-400">
+                        Chưa có mong muốn công khai nào để khám phá...
+                    </div>
+                <% } %>
+
+                <% wishes.forEach(function(wish) { %>
+                    <div class="bg-white p-7 rounded-3xl shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-300 flex flex-col group">
+                        <div class="flex items-center justify-between mb-5">
+                            <div class="flex items-center space-x-2">
+                                <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold text-xs">
+                                    <%= wish.userId.fullName.charAt(0).toUpperCase() %>
+                                </div>
+                                <span class="text-sm font-bold text-gray-700"><%= wish.userId.fullName %></span>
+                            </div>
+                            <span class="text-[10px] text-gray-300 font-mono italic">
+                                <%= new Date(wish.createdAt).toLocaleDateString('vi-VN') %>
+                            </span>
+                        </div>
+
+                        <div class="flex items-start mb-6 flex-grow">
+                            <span class="text-4xl mr-4 bg-gray-50 p-3 rounded-2xl"><%= wish.icon || '🎁' %></span>
+                            <div>
+                                <h4 class="text-xl font-bold text-gray-950 mb-1"><%= wish.title %></h4>
+                                <p class="text-[11px] text-gray-400 font-black uppercase tracking-widest"><%= wish.category %></p>
+                            </div>
+                        </div>
+
+                        <form action="/add-wish" method="POST">
+                            <input type="hidden" name="title" value="<%= wish.title %>">
+                            <input type="hidden" name="category" value="<%= wish.category %>">
+                            <input type="hidden" name="icon" value="<%= wish.icon %>">
+                            <button type="submit" class="w-full py-3 bg-blue-50 text-blue-600 rounded-2xl font-bold hover:bg-blue-600 hover:text-white transition-all duration-200 flex items-center justify-center space-x-2 group-hover:scale-[1.02]">
+                                <span>✨ Ước giống bạn</span>
+                            </button>
+                        </form>
+                    </div>
+                <% }); %>
+            </div>
+
+            <% if (totalPages > 1) { %>
+                <div class="flex justify-center items-center space-x-2 mt-16">
+                    
+                    <% if (currentPage > 1) { %>
+                        <a href="/explore?page=<%= currentPage - 1 %>" 
+                           class="px-5 py-2.5 bg-white border border-gray-200 rounded-2xl text-gray-600 font-semibold hover:bg-gray-50 hover:border-blue-300 transition-all shadow-sm">
+                           ← Trước
+                        </a>
+                    <% } %>
+
+                    <div class="flex items-center space-x-1 bg-gray-100 p-1.5 rounded-2xl">
+                        <% for(let i = 1; i <= totalPages; i++) { %>
+                            <a href="/explore?page=<%= i %>" 
+                               class="w-10 h-10 flex items-center justify-center rounded-xl font-bold transition-all
+                               <%= currentPage === i ? 'bg-blue-600 text-white shadow-md scale-110' : 'text-gray-500 hover:bg-white hover:text-blue-600' %>">
+                                <%= i %>
+                            </a>
+                        <% } %>
+                    </div>
+
+                    <% if (currentPage < totalPages) { %>
+                        <a href="/explore?page=<%= currentPage + 1 %>" 
+                           class="px-5 py-2.5 bg-white border border-gray-200 rounded-2xl text-gray-600 font-semibold hover:bg-gray-50 hover:border-blue-300 transition-all shadow-sm">
+                           Sau →
+                        </a>
+                    <% } %>
+                    
+                </div>
+                
+                <p class="text-center text-gray-400 text-xs mt-6 font-medium uppercase tracking-widest">
+                    Trang <%= currentPage %> / <%= totalPages %>
+                </p>
+            <% } %>
+
+        </div>
+    </main>
+
+    <%- include('partials/footer') %>
+</body>
+</html>

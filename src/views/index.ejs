@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/stylesheets/style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col font-sans antialiased text-gray-900">
+
+    <%- include('partials/header') %>
+
+    <main class="container mx-auto px-6 py-16 flex-grow">
+        <div class="max-w-6xl mx-auto">
+            
+            <div class="text-center mb-20 space-y-4">
+                <div class="inline-block bg-blue-100 text-blue-700 px-4 py-1.5 rounded-full text-sm font-semibold tracking-wide border border-blue-200 shadow-inner">
+                    Kết nối mong muốn của bạn với thế giới thực!
+                </div>
+                <h2 class="text-5xl md:text-6xl font-extrabold text-gray-950 leading-tight">
+                    Chào mừng bạn quay trở lại, <span class="text-blue-600"><%= username %></span>!
+                </h2>
+                
+                <div class="pt-10">
+                    <form action="/add-wish" method="POST" class="max-w-4xl mx-auto flex flex-col md:flex-row items-stretch gap-2 p-2 bg-white rounded-3xl shadow-2xl border border-gray-100">
+                        <div class="flex-grow relative flex items-center">
+                            <span class="absolute left-5 text-gray-400">✨</span>
+                            <input 
+                                type="text" 
+                                name="title" 
+                                placeholder="Mong muốn của bạn là gì?..." 
+                                required 
+                                class="w-full pl-12 pr-4 py-4 rounded-2xl text-gray-700 focus:outline-none text-lg placeholder:text-gray-300 placeholder:italic"
+                            >
+                        </div>
+
+                        <div class="flex gap-1 bg-gray-50 p-1 rounded-2xl border border-gray-100">
+                            <select name="category" class="bg-transparent px-3 py-2 text-sm font-bold text-gray-600 outline-none cursor-pointer hover:bg-white rounded-xl transition-all">
+                                <option value="Học tập" selected>📚 Học tập</option>
+                                <option value="Mua sắm">🛍️ Mua sắm</option>
+                                <option value="Sức khỏe">💪 Sức khỏe</option>
+                                <option value="Du lịch">✈️ Du lịch</option>
+                                <option value="Khác">✨ Khác</option>
+                            </select>
+
+                            <select name="icon" class="bg-transparent px-3 py-2 text-xl outline-none cursor-pointer hover:bg-white rounded-xl transition-all border-l border-gray-200">
+                                <option value="💻" selected>💻</option>
+                                <option value="🎮">🎮</option>
+                                <option value="⚽">⚽</option>
+                                <option value="🍔">🍔</option>
+                                <option value="🏖️">🏖️</option> 
+                            </select>
+                        </div>
+
+                        <button type="submit" class="bg-blue-600 text-white px-8 py-4 rounded-2xl font-black shadow-lg shadow-blue-100 hover:bg-blue-700 hover:scale-[1.02] active:scale-95 transition-all duration-200 shrink-0 flex items-center justify-center">
+                            🚀 <span class="ml-2 hidden md:inline"></span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="mb-10 bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
+                <form action="/" method="GET" class="flex flex-col md:flex-row gap-4">
+                    <div class="flex-grow relative">
+                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">🔍</span>
+                        <input type="text" name="search" value="<%= search %>" placeholder="Tìm kiếm mong muốn..." 
+                            class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all">
+                    </div>
+                    <div class="md:w-64">
+                        <select name="category" onchange="this.form.submit()" 
+                                class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:outline-none cursor-pointer transition-all">
+                            <option value="">Tất cả danh mục</option>
+                            <option value="Học tập" <%= category === 'Học tập' ? 'selected' : '' %>>📚 Học tập</option>
+                            <option value="Mua sắm" <%= category === 'Mua sắm' ? 'selected' : '' %>>🛍️ Mua sắm</option>
+                            <option value="Sức khỏe" <%= category === 'Sức khỏe' ? 'selected' : '' %>>💪 Sức khỏe</option>
+                            <option value="Du lịch" <%= category === 'Du lịch' ? 'selected' : '' %>>✈️ Du lịch</option>
+                            <option value="Khác" <%= category === 'Khác' ? 'selected' : '' %>>✨ Khác</option>
+                        </select>
+                    </div>
+                    <% if (search || category) { %>
+                        <a href="/" class="px-6 py-3 text-gray-500 hover:text-red-500 font-medium flex items-center justify-center">Xóa lọc</a>
+                    <% } %>
+                </form>
+            </div>
+
+            <div class="mb-16">
+                <div class="flex items-center justify-between mb-8 border-b-2 border-gray-200 pb-5">
+                    <h3 class="text-2xl font-bold text-gray-900 flex items-center">
+                        <span class="mr-3 text-orange-500">⏳</span> 
+                        <% if (search || category) { %> Kết quả tìm kiếm <% } else { %> Đang thực hiện <% } %>
+                    </h3>
+                    <span class="bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-xs font-bold"><%= pendingWishes.length %> mục</span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <% if (pendingWishes.length === 0) { %>
+                        <div class="col-span-full py-10 text-center text-gray-400 italic">Không tìm thấy mong muốn nào...</div>
+                    <% } %>
+                    <% pendingWishes.forEach(function(wish) { %>
+                        <div class="bg-white p-7 rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl hover:border-blue-100 transition-all duration-300 transform hover:-translate-y-1 flex flex-col group">
+                            <div class="flex items-center justify-between mb-5">
+                                <a href="/toggle-privacy/<%= wish._id %>" 
+                                   class="flex items-center space-x-1 px-2 py-1 rounded-lg text-[10px] font-bold transition-all <%= wish.isPublic ? 'bg-green-50 text-green-600 hover:bg-green-100' : 'bg-gray-100 hover:bg-gray-200' %>">
+                                    <span><%= wish.isPublic ? '🌍 Public' : '🔒 Private' %></span>
+                                </a>
+                                <span class="bg-orange-50 text-orange-600 px-3 py-1 text-[10px] uppercase font-black rounded-lg border border-orange-100">
+                                    In Progress
+                                </span>
+                            </div>
+
+                            <div class="flex items-start mb-6 flex-grow">
+                                <span class="text-4xl mr-4 mt-1 bg-gray-50 p-3 rounded-2xl group-hover:bg-blue-50 transition-colors">
+                                    <%= wish.icon || '🎁' %>
+                                </span>
+                                <div class="flex-grow">
+                                    <h4 class="text-xl font-bold text-gray-950 mb-1 group-hover:text-blue-600 transition-colors">
+                                        <%= wish.title %>
+                                    </h4>
+                                    <p class="text-[11px] text-gray-400 font-bold uppercase tracking-widest">
+                                        <%= wish.category %>
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="border-t border-gray-50 pt-5 mt-auto flex justify-end items-center space-x-2">
+                                <form action="/toggle-status/<%= wish._id %>" method="POST">
+                                    <button type="submit" class="text-xs font-bold text-blue-600 px-4 py-2 hover:bg-blue-600 hover:text-white rounded-xl border border-blue-100 transition-all">
+                                        ✅ Xong
+                                    </button>
+                                </form>
+                                
+                                <button onclick="editWish('<%= wish._id %>', '<%= wish.title %>', '<%= wish.category %>')" 
+                                        class="p-2 text-gray-400 hover:text-yellow-500 transition-all hover:bg-yellow-50 rounded-lg">
+                                    ✏️
+                                </button>
+
+                                <form action="/delete-wish/<%= wish._id %>" method="POST" id="delete-form-<%= wish._id %>">
+                                    <button type="button" onclick="confirmDelete('<%= wish._id %>')" class="p-2 text-gray-400 hover:text-red-500 transition-all hover:bg-red-50 rounded-lg">
+                                        🗑️
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    <% }); %>
+                </div>
+
+                <% if (typeof totalPages !== 'undefined' && totalPages > 1) { %>
+                    <div class="flex justify-center items-center space-x-2 mt-12">
+                        <% for(let i = 1; i <= totalPages; i++) { %>
+                            <a href="/?page=<%= i %>&search=<%= search %>&category=<%= category %>" 
+                               class="w-10 h-10 flex items-center justify-center rounded-xl font-bold transition-all 
+                               <%= currentPage === i ? 'bg-blue-600 shadow-lg' : 'bg-white text-gray-500 hover:bg-gray-100 border border-gray-200' %>">
+                                <%= i %>
+                            </a>
+                        <% } %>
+                    </div>
+                <% } %>
+            </div>
+
+            <% if (completedWishes.length > 0) { %>
+                <div class="pt-10 border-t border-dashed border-gray-300">
+                    <div class="flex items-center justify-between mb-8 pb-5">
+                        <h3 class="text-2xl font-bold text-green-600 flex items-center">
+                            <span class="mr-3">🏆</span> Đã chinh phục
+                        </h3>
+                        <span class="text-gray-400 font-medium text-sm"><%= completedWishes.length %> hoàn thành</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <% completedWishes.forEach(function(wish) { %>
+                            <div class="bg-gray-50/50 p-7 rounded-2xl border border-gray-200 flex flex-col opacity-60 grayscale-[0.8] hover:grayscale-0 hover:opacity-100 transition-all duration-500">
+                                <div class="flex items-center justify-between mb-4">
+                                     <a href="/toggle-privacy/<%= wish._id %>" 
+                                        class="text-[10px] font-bold <%= wish.isPublic ? 'text-green-500' : 'text-gray-400' %>">
+                                        <%= wish.isPublic ? '🌍 Public' : '🔒 Private' %>
+                                     </a>
+                                     <span class="text-[10px] font-mono text-gray-300">#<%= wish._id.toString().slice(-4) %></span>
+                                </div>
+                                <div class="flex items-start mb-6 flex-grow">
+                                    <span class="text-4xl mr-4 bg-white p-3 rounded-2xl shadow-sm border border-gray-100">
+                                        <%= wish.icon %>
+                                    </span>
+                                    <div class="flex-grow">
+                                        <h4 class="text-xl font-semibold text-gray-500 line-through">
+                                            <%= wish.title %>
+                                        </h4>
+                                        <p class="text-[10px] text-gray-400 font-black uppercase tracking-widest">
+                                            <%= wish.category %>
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div class="flex justify-end items-center space-x-2">
+                                    <form action="/toggle-status/<%= wish._id %>" method="POST">
+                                        <button type="submit" class="text-[10px] font-black text-gray-400 uppercase tracking-tighter px-3 py-1 hover:text-blue-500 transition-all">
+                                            🔄 Làm lại
+                                        </button>
+                                    </form>
+
+                                    <button onclick="editWish('<%= wish._id %>', '<%= wish.title %>', '<%= wish.category %>')" 
+                                            class="text-[10px] font-black text-gray-400 uppercase tracking-tighter px-3 py-1 hover:text-yellow-500 transition-all">
+                                        ✏️ Sửa
+                                    </button>
+
+                                    <form action="/delete-wish/<%= wish._id %>" method="POST" id="delete-form-<%= wish._id %>">
+                                        <button type="button" onclick="confirmDelete('<%= wish._id %>')" class="text-[10px] font-black text-gray-400 uppercase tracking-tighter px-3 py-1 hover:text-red-500 transition-all">
+                                            🗑️ Xóa
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        <% }); %>
+                    </div>
+                </div>
+            <% } %>
+
+        </div>
+    </main>
+
+    <%- include('partials/footer') %>
+
+    <script>
+    // --- XỬ LÝ THÔNG BÁO ---
+    const urlParams = new URLSearchParams(window.location.search);
+    const errorMsg = urlParams.get('error');
+    const successMsg = urlParams.get('success');
+
+    if (errorMsg) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Lỗi!',
+            text: errorMsg,
+            confirmButtonColor: '#2563eb'
+        });
+        window.history.replaceState({}, document.title, "/");
+    }
+
+    if (successMsg) {
+        Swal.fire({
+            icon: 'success',
+            title: 'Tuyệt vời!',
+            text: successMsg,
+            timer: 2000,
+            showConfirmButton: false
+        });
+        window.history.replaceState({}, document.title, "/");
+    }
+
+    // --- HÀM SỬA MONG MUỐN ---
+    async function editWish(id, currentTitle, currentCategory) {
+        const { value: formValues } = await Swal.fire({
+            title: 'Chỉnh sửa mong muốn',
+            html:
+                `<input id="swal-input1" class="swal2-input" placeholder="Tên mong muốn" value="${currentTitle}">` +
+                `<select id="swal-input2" class="swal2-input">
+                    <option value="Học tập" ${currentCategory === 'Học tập' ? 'selected' : ''}>📚 Học tập</option>
+                    <option value="Mua sắm" ${currentCategory === 'Mua sắm' ? 'selected' : ''}>🛍️ Mua sắm</option>
+                    <option value="Sức khỏe" ${currentCategory === 'Sức khỏe' ? 'selected' : ''}>💪 Sức khỏe</option>
+                    <option value="Du lịch" ${currentCategory === 'Du lịch' ? 'selected' : ''}>✈️ Du lịch</option>
+                    <option value="Khác" ${currentCategory === 'Khác' ? 'selected' : ''}>✨ Khác</option>
+                </select>`,
+            focusConfirm: false,
+            showCancelButton: true,
+            confirmButtonText: 'Lưu thay đổi',
+            cancelButtonText: 'Hủy',
+            preConfirm: () => {
+                return {
+                    title: document.getElementById('swal-input1').value,
+                    category: document.getElementById('swal-input2').value
+                }
+            }
+        });
+        if (formValues) {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = `/update-wish/${id}`;
+            
+            for (const key in formValues) {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = key;
+                input.value = formValues[key];
+                form.appendChild(input);
+            }
+            document.body.appendChild(form);
+            form.submit();
+        }
+    }
+
+    // --- HÀM XÁC NHẬN XÓA ---
+    function confirmDelete(id) {
+        Swal.fire({
+            title: 'Bạn có chắc chắn?',
+            text: "Mong muốn này sẽ biến mất vĩnh viễn đó!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            cancelButtonColor: '#6b7280',
+            confirmButtonText: 'Đúng, xóa nó!',
+            cancelButtonText: 'Giữ lại'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById(`delete-form-${id}`).submit();
+            }
+        });
+    }
+    </script>
+</body>
+</html>

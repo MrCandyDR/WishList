@@ -1,0 +1,29 @@
+<div class="bg-white p-7 rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-300 flex flex-col">
+    <div class="flex items-center justify-between mb-5">
+        <span class="text-sm font-mono text-gray-400">#<%= wish._id.toString().slice(-4) %></span>
+        <span class="<%= wish.status === 'done' ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-orange-800' %> px-3 py-1 text-xs font-bold rounded-full border shadow-inner">
+            <%= wish.status === 'done' ? '✓ Hoàn thành' : '⏳ Đang chờ' %>
+        </span>
+    </div>
+
+    <div class="flex items-start mb-6 flex-grow">
+        <span class="text-4xl mr-4"><%= wish.icon || '🎁' %></span>
+        <div>
+            <h4 class="text-xl font-semibold <%= wish.status === 'done' ? 'line-through text-gray-400' : 'text-gray-950' %>">
+                <%= wish.title %>
+            </h4>
+            <p class="text-sm text-gray-500 italic mt-1"><%= wish.category %></p>
+        </div>
+    </div>
+
+    <div class="flex justify-end space-x-2">
+        <form action="/toggle-status/<%= wish._id %>" method="POST">
+            <button type="submit" class="text-xs font-bold text-blue-600 px-3 py-2 hover:bg-blue-50 rounded-xl border border-blue-100">
+                <%= wish.status === 'done' ? '🔄 Làm lại' : '✅ Hoàn thành' %>
+            </button>
+        </form>
+        <form action="/delete-wish/<%= wish._id %>" method="POST" onsubmit="return confirm('Xóa nhé ?')">
+            <button type="submit" class="text-xs font-bold text-red-500 px-3 py-2 hover:bg-red-50 rounded-xl border border-red-100">🗑️ Xóa</button>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,27 @@
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    // Lấy params từ URL (error hoặc success)
+    const urlParams = new URLSearchParams(window.location.search);
+    const errorMsg = urlParams.get('error');
+    const successMsg = urlParams.get('success');
+
+    if (errorMsg) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Lỗi rồi!',
+            text: errorMsg,
+            confirmButtonColor: '#3085d6'
+        });
+    }
+
+    if (successMsg) {
+        Swal.fire({
+            icon: 'success',
+            title: 'Thành công!',
+            text: successMsg,
+            timer: 2000,
+            showConfirmButton: false
+        });
+    }
+</script>
