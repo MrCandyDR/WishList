@@ -25,7 +25,7 @@ app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// 4. Cấu hình Session (BẢN ĐƠN GIẢN - GIỐNG SLIDE)
+// 4. Cấu hình Session
 app.use(session({
     secret: process.env.SESSION_SECRET || 'tin_secret_key_2026', 
     resave: false,
